@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:mobile/app/constants/routes.dart';
 import 'package:mobile/app/constants/theme.dart';
 
-void main() {
+Future<void> main() async {
   runApp(const MyApp());
 }
 

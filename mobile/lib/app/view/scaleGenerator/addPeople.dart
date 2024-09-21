@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app/constants/estilos.dart';
-import 'package:mobile/app/logica/pessoas.dart';
+import 'package:mobile/app/logica/classes.dart';
 
 class AdicionarPessoas extends StatefulWidget {
   const AdicionarPessoas({super.key});
@@ -23,7 +23,8 @@ class _AdicionarPessoasState extends State<AdicionarPessoas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Adicionar Pessoas')),
-      body: Column(
+      body: ListView(
+        shrinkWrap: true,
         children: [
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -51,6 +52,7 @@ class _AdicionarPessoasState extends State<AdicionarPessoas> {
                         onPressed: _adicionarNome,
                         child: const Text('Adicionar'),
                       ),
+                      const SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pushNamedAndRemoveUntil(context,
@@ -64,20 +66,34 @@ class _AdicionarPessoasState extends State<AdicionarPessoas> {
               ),
             ),
           ),
+          // O ListView.builder precisa do shrinkWrap e physics
           ListView.builder(
             shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             itemCount: Pessoas.nomes.length,
             itemBuilder: (context, index) => ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.person),
               title: Text(Pessoas.nomes[index]),
-              trailing: Text('${++index}'),
+              subtitle: Text('${index + 1}'),
+              trailing: IconButton(
+                onPressed: () {
+                  _removerNome(index);
+                },
+                icon: const Icon(Icons.delete),
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _removerNome(int index) {
+    setState(() {
+      Pessoas.nomes.removeAt(index);
+    });
   }
 
   void _adicionarNome() {
