@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app/constants/estilos.dart';
-import 'package:mobile/app/logica/classes.dart';
+import 'package:mobile/app/logica/pessoas.dart';
 
 class PaginaPrincipal extends StatefulWidget {
   const PaginaPrincipal({super.key});
@@ -24,7 +24,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
               Navigator.pushNamedAndRemoveUntil(
                   context, '/adicionarPessoas', (route) => false);
             },
-            child: const Text('Inserir Pessoas'),
+            child: const Text('Inserir acolito'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -39,11 +39,11 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
               style: estiloTexto(tamanho: 20, peso: FontWeight.bold),
             ),
           ),
-          Pessoas.nomes.isEmpty
+          Pessoas.acolitos.isEmpty
               ? Align(
                   alignment: Alignment.center,
                   child: Text(
-                    'Nenhuma pessoa inserida ',
+                    'Nenhum acolito inserido ',
                     style: estiloTexto(tamanho: 15, peso: FontWeight.bold),
                   ),
                 )
@@ -51,13 +51,18 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: Pessoas.nomes.length,
-                  itemBuilder: (context, index) => ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.person),
-                    title: Text(Pessoas.nomes[index]),
-                    trailing: Text('${++index}'),
-                  ),
+                  itemCount: Pessoas.acolitos.length,
+                  itemBuilder: (context, index) {
+                    String nome = Pessoas.acolitos.keys.elementAt(index);
+                    String funcao = Pessoas.acolitos[nome] ?? 'Sem função';
+
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.person),
+                      title: Text(nome),
+                      trailing: Text(funcao),
+                    );
+                  },
                 ),
         ],
       ),

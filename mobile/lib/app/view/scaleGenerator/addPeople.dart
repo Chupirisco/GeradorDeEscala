@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app/constants/estilos.dart';
-import 'package:mobile/app/logica/classes.dart';
+import 'package:mobile/app/logica/pessoas.dart';
 
 class AdicionarPessoas extends StatefulWidget {
   const AdicionarPessoas({super.key});
@@ -12,6 +12,16 @@ class AdicionarPessoas extends StatefulWidget {
 class _AdicionarPessoasState extends State<AdicionarPessoas> {
   final TextEditingController _nomeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  // Variável para armazenar a opção selecionada
+  String? _selectedOption;
+
+  // Mapa com as opções e valores associados
+  final Map<String, String> _options = {
+    'Normal': 'normal',
+    'Missal': 'missal',
+    'Cerimoniario': 'cerimoniario',
+  };
 
   @override
   void dispose() {
@@ -45,6 +55,28 @@ class _AdicionarPessoasState extends State<AdicionarPessoas> {
                     },
                   ),
                   const SizedBox(height: 20),
+                  DropdownButtonFormField<String>(
+                    hint: const Text('Selecione uma opção'),
+                    value: _selectedOption,
+                    items: _options.keys.map((String option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOption = newValue;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Por favor, selecione uma opção';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -66,41 +98,51 @@ class _AdicionarPessoasState extends State<AdicionarPessoas> {
               ),
             ),
           ),
-          // O ListView.builder precisa do shrinkWrap e physics
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: Pessoas.nomes.length,
-            itemBuilder: (context, index) => ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.person),
-              title: Text(Pessoas.nomes[index]),
-              subtitle: Text('${index + 1}'),
-              trailing: IconButton(
-                onPressed: () {
-                  _removerNome(index);
-                },
-                icon: const Icon(Icons.delete),
-              ),
-            ),
+            itemCount: Pessoas.acolitos.length,
+            itemBuilder: (context, index) {
+              String nome = Pessoas.acolitos.keys.elementAt(index);
+              String funcao = Pessoas.acolitos[nome] ?? 'Sem função';
+
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.person),
+                title: Text(nome),
+                subtitle: Text(funcao),
+                trailing: IconButton(
+                  onPressed: () {
+                    _removerNome(nome);
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  void _removerNome(int index) {
+  void _removerNome(String key) {
     setState(() {
-      Pessoas.nomes.removeAt(index);
+      Pessoas.acolitos.remove(key);
     });
   }
 
   void _adicionarNome() {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
-        Pessoas.adicionarPessoasaLista(_nomeController.text);
+        // Obtém a função correspondente à opção selecionada
+        String funcaoSelecionada = _selectedOption ?? 'Sem função';
+
+        // Adiciona a pessoa e a função diretamente
+        Pessoas.adicionarPessoa(_nomeController.text, funcaoSelecionada);
+
         _nomeController.clear();
+        _selectedOption = null; // Limpar a seleção após adicionar
       });
     }
   }

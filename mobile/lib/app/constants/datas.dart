@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Datas {
   static DateTime primeiroDiaDoMes =
       DateTime(DateTime.now().year, DateTime.now().month, 1);
